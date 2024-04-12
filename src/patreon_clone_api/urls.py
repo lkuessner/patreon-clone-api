@@ -18,10 +18,37 @@ from django.contrib import admin
 from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from rest_framework.response import Response
 from rest_framework import permissions
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
+class CustomTokenVerifyView(TokenVerifyView):
+    """
+    Custom view for token verification.
+
+    This view extends the default TokenVerifyView to include custom behavior for handling
+    token verification requests. It checks for the presence of a token in the request data,
+    validates it, and returns a response indicating whether the token is valid or not.
+    """
+    
+    def post(self, request, *args, **kwargs):
+        token = request.data.get('token')
+        serializer = self.get_serializer(data=request.data)
+
+        if token is None:
+            return Response({'error': 'Missing token in request data'}, status=400)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+            return Response({'message': 'Token is valid'})
+        except Exception as e:
+            return Response({'error': 'Invalid token'}, status=401)
+        
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', CustomTokenVerifyView.as_view(), name='token_verify'),
 ]
 
 # swagger
@@ -34,7 +61,7 @@ api_info = openapi.Info(
 schema_view = get_schema_view(
     api_info,
     public=True,
-    permission_classes=(permissions.IsAuthenticated,),
+    # permission_classes=(permissions.IsAuthenticated,),
 )
 
 urlpatterns += [
