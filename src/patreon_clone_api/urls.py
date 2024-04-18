@@ -22,7 +22,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
-from users import views
+from users.views import RegisterViewSet, UserViewSet, LoginViewSet, LogoutViewSet
 
 class CustomTokenVerifyView(TokenVerifyView):
     """
@@ -48,14 +48,18 @@ class CustomTokenVerifyView(TokenVerifyView):
         
         
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
+router.register(r'register', RegisterViewSet, basename='register')
+router.register(r'login', LoginViewSet, basename='login')
+router.register(r'logout', LogoutViewSet, basename='logout')
+router.register(r'user', UserViewSet, basename='user')
         
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', CustomTokenVerifyView.as_view(), name='token_verify'),
+    
+    path('', include('users.urls')),
     
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
