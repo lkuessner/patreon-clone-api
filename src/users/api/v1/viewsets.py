@@ -3,7 +3,7 @@ from django.contrib.auth.models import  User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, viewsets
-from ...serializers import UserSerializer
+from .serializers import UserSerializer
 
 import jwt, datetime
 from django.utils import timezone
