@@ -1,0 +1,8 @@
+__misc__
+venv
+.env
+db.sqlite3
+*.pyc
+*.log
+.DS_Store
+
