@@ -76,3 +76,80 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+
+class Country(models.Model):
+    title = models.CharField(_("Name"), max_length=255)
+    code = models.CharField(_("Country Code"), max_length=3)
+
+    class Meta:
+        verbose_name_plural = "Countries"
+
+    def __str__(self):
+        return self.title
+
+
+class State(models.Model):
+    title = models.CharField(_("Name"), max_length=255)
+    code = models.CharField(_("State Code"), max_length=3)
+
+    def __str__(self):
+        return self.title
+
+
+class City(models.Model):
+    title = models.CharField(_("Name"), max_length=255)
+    code = models.CharField(_("City Code"), max_length=3)
+
+    class Meta:
+        verbose_name_plural = "Cities"
+
+    def __str__(self):
+        return self.title
+
+
+class UserAddress(models.Model):
+    """
+    User Address model.
+
+    This model represents a user's address information.
+    """
+
+    user = models.ForeignKey(
+        User,
+        verbose_name=_("User"),
+        on_delete=models.CASCADE,
+        related_name="addresses",
+        blank=True,
+        null=True,
+    )
+
+    country = models.ForeignKey(
+        Country,
+        verbose_name=_("Country"),
+        on_delete=models.CASCADE,
+        related_name="addresses",
+        blank=True,
+        null=True,
+    )
+
+    state = models.ForeignKey(
+        State,
+        verbose_name=_("State"),
+        on_delete=models.CASCADE,
+        related_name="addresses",
+        blank=True,
+        null=True,
+    )
+
+    city = models.ForeignKey(
+        City,
+        verbose_name=_("City"),
+        on_delete=models.CASCADE,
+        related_name="addresses",
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return f"{self.user.username}'s Address"
